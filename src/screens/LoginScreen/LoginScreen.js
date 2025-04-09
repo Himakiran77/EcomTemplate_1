@@ -97,7 +97,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLogin = () => {
     if (validateForm()) {
-      Alert.alert('Success', 'Login successful!');
+      // Alert.alert('Success', 'Login successful!');
       navigation.navigate('Otp', {email: email});
     }
   };

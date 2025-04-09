@@ -5,6 +5,7 @@ import { removeFromCart, clearCart, incrementQuantity, decrementQuantity } from 
 import Images from '../../assets/Images';
 import { useNavigation } from '@react-navigation/native';
 
+
 const { width, height } = Dimensions.get('window');
 
 const CartScreen = () => {
@@ -14,7 +15,12 @@ const CartScreen = () => {
   const navigation = useNavigation();
 
   const handleNavigateCheckout = () => {
-    navigation.navigate('Checkout');
+    navigation.navigate('Checkout', {
+      cartItems: cartItems,
+      totalAmount: totalAmount,
+      shippingFee: 5.99,
+      grandTotal: totalAmount + 5.99
+    });
   }
 
   const handleRemoveItem = (itemId) => {

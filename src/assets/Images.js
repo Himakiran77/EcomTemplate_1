@@ -9,6 +9,12 @@ const Images = {
     Upi: require('../assets/Upi.png'),
     Success: require('../assets/Success.png'),
     YellowProfile: require('../assets/YellowProfile.png'),
+    RightArrow: require('../assets/RightArrow.png'),
+    User: require('../assets/User.png'),
+    Location: require('../assets/Location.png'),
+    Notification: require('../assets/Notification.png'),
+    Terms: require('../assets/Terms.png'),
+    Lock: require('../assets/Lock.png'),
     
 }
 

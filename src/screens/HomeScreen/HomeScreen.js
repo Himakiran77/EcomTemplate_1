@@ -123,7 +123,7 @@ const HomeScreen = ({ navigation }) => {
           showsHorizontalScrollIndicator={false} 
           contentContainerStyle={styles.categoryScrollContent}
         >
-          {['All', 'electronics', 'jewelery', "men's clothing", "women's clothing"].map((category) => (
+          {['All', 'Electronics','jewelery', "men's clothing", "women's clothing"].map((category) => (
             <TouchableOpacity
               key={category}
               style={[

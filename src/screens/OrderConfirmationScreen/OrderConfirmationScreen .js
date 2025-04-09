@@ -5,14 +5,28 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  FlatList,
+  Image,
+  ScrollView
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { clearCart } from "../../redux/cartSlice";
+import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 
-const OrderConfirmationScreen = ({ navigation }) => {
+const OrderConfirmationScreen = ({ route }) => {
+  const cartItems = useSelector((state) => state.cart.items);
   const totalAmount = useSelector((state) => state.cart.total);
+  const dispatch = useDispatch();
+  const { orderData } = route.params || {}; 
+  const navigation = useNavigation();
+
+  const handlenavigateOrders = () => {
+    navigation.navigate('Orders');
+  }
 
   const generateOrderNumber = () => {
     const numbers = Math.floor(10000 + Math.random() * 90000);
@@ -20,9 +34,23 @@ const OrderConfirmationScreen = ({ navigation }) => {
     return `${numbers}-${letters}`;
   };
 
-  const [orderNumber] = useState(generateOrderNumber());
+  const [orderNumber] = useState(orderData?.orderId || generateOrderNumber());
+
+  const renderProductItem = ({ item }) => (
+    <View style={styles.productItem}>
+      <Image source={{ uri: item.image }} style={styles.productImage} />
+      <View style={styles.productDetails}>
+        <Text style={styles.productName}>{item.title}</Text>
+        <Text style={styles.productQuantity}>Quantity: {item.quantity}</Text>
+        <Text style={styles.productTotal}>
+          Total: ${(item.price * item.quantity).toFixed(2)}
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Animatable.View animation="fadeInUp" duration={1000} style={styles.card}>
         {/* Checkmark Circle */}
@@ -43,13 +71,14 @@ const OrderConfirmationScreen = ({ navigation }) => {
         {/* Order Details */}
         <View style={styles.orderDetails}>
           <Text style={styles.orderTitle}>Order Summary</Text>
+          
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Order Number:</Text>
             <Text style={styles.detailValue}>{orderNumber}</Text>
           </View>
+          
           <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Estimated Delivery:</Text>
-            {/* <Text style={styles.detailValue}>April 10, 2025</Text> */}
+            <Text style={styles.detailLabel}>Ordered on:</Text>
             <Text style={styles.detailValue}>
               {new Date().toLocaleDateString("en-US", {
                 month: "long",
@@ -58,11 +87,42 @@ const OrderConfirmationScreen = ({ navigation }) => {
               })}
             </Text>
           </View>
+          
+          {/* Products List */}
+          <Text style={styles.productsTitle}>Products:</Text>
+          <FlatList
+            data={orderData?.items || cartItems}
+            renderItem={renderProductItem}
+            keyExtractor={(item) => item.id.toString()}
+            scrollEnabled={false}
+          />
+          
+          {/* Order Summary */}
+          <View style={styles.summarySection}>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Subtotal:</Text>
+              <Text style={styles.detailValue}>${orderData?.subtotal?.toFixed(2) || totalAmount.toFixed(2)}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Shipping:</Text>
+              <Text style={styles.detailValue}>${orderData?.shipping?.toFixed(2) || 5.99.toFixed(2)}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Tax:</Text>
+              <Text style={styles.detailValue}>${orderData?.tax?.toFixed(2) || (totalAmount * 0.1).toFixed(2)}</Text>
+            </View>
+            <View style={[styles.detailRow, styles.totalRow]}>
+              <Text style={[styles.detailLabel, styles.totalLabel]}>Total:</Text>
+              <Text style={[styles.detailValue, styles.totalValue]}>
+                ${orderData?.total?.toFixed(2) || (totalAmount + 5.99 + (totalAmount * 0.1)).toFixed(2)}
+              </Text>
+            </View>
+          </View>
+          
+          {/* Payment Method */}
           <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Total Amount:</Text>
-            <Text style={styles.detailValue}>
-              ${(totalAmount + 5.99).toFixed(2)}
-            </Text>
+            <Text style={styles.detailLabel}>Payment Method:</Text>
+            <Text style={styles.detailValue}>{orderData?.paymentMethod || "Credit Card"}</Text>
           </View>
         </View>
 
@@ -70,19 +130,23 @@ const OrderConfirmationScreen = ({ navigation }) => {
         <View style={styles.actions}>
           <TouchableOpacity
             style={styles.primaryButton}
-            onPress={() => alert("Tracking")}
+            onPress={handlenavigateOrders}
           >
             <Text style={styles.buttonText}>Track Your Order</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.secondaryButton}
-            onPress={() => navigation.navigate("Tabs")} 
+            onPress={() => {
+              navigation.navigate("Tabs");
+              dispatch(clearCart());
+            }}
           >
             <Text style={styles.buttonText}>Continue Shopping</Text>
           </TouchableOpacity>
         </View>
       </Animatable.View>
     </View>
+    </ScrollView>
   );
 };
 
@@ -203,6 +267,65 @@ const styles = StyleSheet.create({
       marginRight: 0,
       marginBottom: 10,
     },
+  },
+  productsTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  productItem: {
+    flexDirection: "row",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  productImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 15,
+  },
+  productDetails: {
+    flex: 1,
+  },
+  productName: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 4,
+  },
+  productPrice: {
+    fontSize: 13,
+    color: "#666",
+  },
+  productQuantity: {
+    fontSize: 13,
+    color: "#666",
+  },
+  productTotal: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginTop: 4,
+  },
+  summarySection: {
+    marginTop: 15,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+  },
+  totalRow: {
+    marginTop: 5,
+    paddingTop: 5,
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+  },
+  totalLabel: {
+    fontWeight: "600",
+  },
+  totalValue: {
+    fontWeight: "600",
+    color: "#4caf50",
   },
 });
 

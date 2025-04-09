@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Alert, Dimensions, Platform } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Alert, Dimensions, Platform, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeFromWishlist, clearWishlist } from '../../redux/wishlistSlice';
 import Images from '../../assets/Images';
@@ -37,6 +37,7 @@ const WishlistScreen = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => (
+    <ScrollView>
     <TouchableOpacity 
       style={styles.itemContainer}
       onPress={() => navigateToProductDetails(item)}
@@ -54,6 +55,7 @@ const WishlistScreen = ({ navigation }) => {
         <Image source={Images.Delete} style={styles.deleteIcon} resizeMode="contain" />
       </TouchableOpacity>
     </TouchableOpacity>
+    </ScrollView>
   );
 
   return (

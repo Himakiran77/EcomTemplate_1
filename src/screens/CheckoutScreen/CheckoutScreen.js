@@ -1,12 +1,14 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, TextInput, Dimensions, Platform, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import Images from '../../assets/Images';
+import { useDispatch } from 'react-redux';
+import { addOrder, clearOrders } from '../../redux/orderSlice';
 
 const { width, height } = Dimensions.get('window');
 
-const CheckoutScreen = () => {
+const CheckoutScreen = (route) => {
   const navigation = useNavigation();
   const cartItems = useSelector(state => state.cart.items);
   const subtotal = useSelector(state => state.cart.total);
@@ -14,6 +16,8 @@ const CheckoutScreen = () => {
   const shipping = 5.99;
   const tax = subtotal * 0.1; // 10% tax
   const total = subtotal + shipping + tax;
+  const dispatch = useDispatch();
+  
 
   const [paymentMethod, setPaymentMethod] = React.useState('card');
   const [cardNumber, setCardNumber] = React.useState('');
@@ -21,16 +25,120 @@ const CheckoutScreen = () => {
   const [cvv, setCvv] = React.useState('');
   const [name, setName] = React.useState('');
 
+  // const handlePlaceOrder = () => {
+  //   Alert.alert(
+  //     'Confirm Order',
+  //     `Total: ${total.toFixed(2)}\n\nProceed with Payment?`,
+  //     [
+  //       { text: 'Cancel', style: 'cancel' },
+  //       {
+  //         text: 'ok',
+  //       onPress: () => {
+  //         navigation.navigate('OrderConfirmation', {
+  //           cartItems: cartItems,
+  //           totalAmount: totalAmount,
+  //           shippingFee: 5.99,
+  //           grandTotal: totalAmount + 5.99
+  //         });
+  //       }
+  //     }
+  //     ]
+  //   );
+  // };
+
+  // useEffect(() => {
+  //   const orderData = {
+  //     // id: orderNumber,
+  //     date: new Date().toISOString(),
+  //     items: cartItems,
+  //     subtotal: totalAmount,
+  //     shipping: 5.99,
+  //     total: totalAmount + 5.99,
+  //     status: "processing",
+  //     // deliveryDate: deliveryDate.toISOString(),
+  //     paymentMethod: "Credit Card" // You can make this dynamic
+  //   };
+
+  //   dispatch(addOrder(orderData));
+  // }, []);
+
+  // useEffect(() => {
+  //   const orderData = {
+  //     orderId: `ORD-${Date.now()}`,
+  //     date: new Date().toISOString(),
+  //     items: cartItems.map(item => ({
+  //       productId: item.id,
+  //       title: item.title,
+  //       price: item.price,
+  //       quantity: item.quantity,
+  //       image: item.image,
+  //       description: item.description || '', 
+  //       category: item.category || '', 
+  //       brand: item.brand || '', 
+  //       color: item.color || '', 
+  //       size: item.size || '' 
+  //     })),
+  //     subtotal: totalAmount,
+  //     shipping: shipping,
+  //     tax: tax,
+  //     total: total,
+  //     status: "processing",
+  //     paymentMethod: paymentMethod, 
+  //     deliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), 
+  //   };
+  
+  //   dispatch(addOrder(orderData));
+  //   // dispatch(clearOrders(orderData));
+  // }, [cartItems, totalAmount, shipping, tax, total, paymentMethod, dispatch]);
+
   const handlePlaceOrder = () => {
     Alert.alert(
       'Confirm Order',
-      `Total: ${(totalAmount + 5.99).toFixed(2)}\n\nProceed with payment?`,
+      `Total: ${total.toFixed(2)}\n\nProceed with Payment?`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Confirm', onPress: () => navigation.navigate('OrderConfirmation') },
+        {
+          text: 'OK',
+          onPress: () => {
+            const orderData = {
+              orderId: `ORD-${Date.now()}`,
+              date: new Date().toISOString(),
+              items: cartItems.map(item => ({
+                productId: item.id,
+                title: item.title,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image,
+                description: item.description || '',
+                category: item.category || '',
+                brand: item.brand || '',
+                color: item.color || '',
+                size: item.size || ''
+              })),
+              subtotal: totalAmount,
+              shipping: 5.99,
+              tax: 0, 
+              total: totalAmount + 5.99,
+              status: "processing",
+              paymentMethod: paymentMethod,
+              deliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            };
+  
+            dispatch(addOrder(orderData)); 
+            // dispatch(clearCart()); 
+  
+            navigation.navigate('OrderConfirmation', {
+              cartItems: cartItems,
+              totalAmount: totalAmount,
+              shippingFee: 5.99,
+              grandTotal: totalAmount + 5.99
+            });
+          }
+        }
       ]
     );
   };
+  
 
   return (
     <View style={styles.container}>
@@ -48,6 +156,22 @@ const CheckoutScreen = () => {
               <Text style={styles.changeButtonText}>Change</Text>
             </TouchableOpacity>
           </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Order Items</Text>
+          {cartItems.map((item) => (
+            <View key={item.id} style={styles.cartItem}>
+              <Image source={{ uri: item.image }} style={styles.itemImage} />
+              <View style={styles.itemDetails}>
+                <Text style={styles.itemTitle}>{item.title}</Text>
+                <Text style={styles.itemPrice}>${item.price.toFixed(2)} × {item.quantity}</Text>
+              </View>
+              <Text style={styles.itemTotal}>
+                ${(item.price * item.quantity).toFixed(2)}
+              </Text>
+            </View>
+          ))}
         </View>
 
         {/* Payment Method */}
@@ -146,7 +270,7 @@ const CheckoutScreen = () => {
       <View style={styles.footer}>
         <TouchableOpacity style={styles.checkoutButton} onPress={handlePlaceOrder}>
           <Text style={styles.checkoutButtonText}>Place Order</Text>
-          <Text style={styles.checkoutButtonPrice}>${(totalAmount + 5.99).toFixed(2)}</Text>
+          <Text style={styles.checkoutButtonPrice}>${total.toFixed(2)}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -213,6 +337,35 @@ const styles = StyleSheet.create({
   changeButtonText: {
     color: '#6200ee',
     fontSize: width * 0.035,
+    fontWeight: '600',
+  },
+  cartItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  itemImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 15,
+  },
+  itemDetails: {
+    flex: 1,
+  },
+  itemTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  itemPrice: {
+    fontSize: 14,
+    color: '#666',
+  },
+  itemTotal: {
+    fontSize: 16,
     fontWeight: '600',
   },
   paymentMethods: {
