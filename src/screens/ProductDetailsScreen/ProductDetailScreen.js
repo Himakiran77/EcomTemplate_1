@@ -1,278 +1,3 @@
-// import React from 'react';
-// import { View, Text, Image, Button, StyleSheet } from 'react-native';
-
-// const ProductDetailsScreen = ({ route }) => {
-//   const { product } = route.params;
-
-//   return (
-//     <View style={styles.container}>
-//       <Image source={{ uri: product.image }} style={styles.image} />
-//       <Text style={styles.title}>{product.title}</Text>
-//       <Text style={styles.price}>${product.price}</Text>
-//       <Text style={styles.description}>{product.description}</Text>
-//       <Button title="Add to Cart" onPress={() => {}} />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1, padding: 10 },
-//   image: { width: '100%', height: 300, resizeMode: 'contain' },
-//   title: { fontSize: 22, fontWeight: 'bold', marginVertical: 10, color: 'black', },
-//   price: { fontSize: 18, color: '#FF6347', marginVertical: 5 },
-//   description: { fontSize: 14, color: '#666' },
-// });
-
-// export default ProductDetailsScreen;
-
-// import React from 'react';
-// import {
-//   View,
-//   Text,
-//   Image,
-//   TouchableOpacity,
-//   StyleSheet,
-//   ScrollView,
-//   Dimensions,
-//   Platform,
-//   SafeAreaView
-// } from 'react-native';
-
-// const ProductDetailsScreen = ({ route, navigation }) => {
-//   const { product } = route.params;
-//   const { width } = Dimensions.get('window');
-//   const isSmallDevice = width < 375;
-
-//   // Simple star rating component without external icons
-//   const renderStars = (rating) => {
-//     const stars = [];
-//     const fullStars = Math.floor(rating);
-//     const hasHalfStar = rating % 1 >= 0.5;
-
-//     for (let i = 1; i <= 5; i++) {
-//       if (i <= fullStars) {
-//         stars.push(<Text key={i} style={styles.starIcon}>★</Text>);
-//       } else if (i === fullStars + 1 && hasHalfStar) {
-//         stars.push(<Text key={i} style={styles.starIcon}>☆</Text>);
-//       } else {
-//         stars.push(<Text key={i} style={styles.starIcon}>☆</Text>);
-//       }
-//     }
-
-//     return stars;
-//   };
-
-//   return (
-//     <SafeAreaView style={styles.safeArea}>
-//       <ScrollView contentContainerStyle={styles.scrollContainer}>
-//         <View style={styles.container}>
-
-//           {/* Product Image */}
-//           <View style={styles.imageContainer}>
-//             <Image
-//               source={{ uri: product.image }}
-//               style={[
-//                 styles.image,
-//                 isSmallDevice && styles.imageSmall
-//               ]}
-//               resizeMode="contain"
-//             />
-//           </View>
-
-//           {/* Product Info */}
-//           <View style={styles.infoContainer}>
-//             <Text style={[
-//               styles.title,
-//               isSmallDevice && styles.titleSmall
-//             ]}>
-//               {product.title}
-//             </Text>
-
-//             <View style={styles.priceRatingContainer}>
-//               <Text style={styles.price}>${product.price.toFixed(2)}</Text>
-//               <View style={styles.ratingContainer}>
-//                 {renderStars(product.rating?.rate || 4.5)}
-//                 <Text style={styles.ratingText}>
-//                   ({product.rating?.count || '120'})
-//                 </Text>
-//               </View>
-//             </View>
-
-//             <Text style={[
-//               styles.description,
-//               isSmallDevice && styles.descriptionSmall
-//             ]}>
-//               {product.description}
-//             </Text>
-//           </View>
-
-//           {/* Action Buttons */}
-//           <View style={styles.buttonContainer}>
-//             <TouchableOpacity
-//               style={styles.addToCartButton}
-//               activeOpacity={0.8}
-//             >
-//               <Text style={styles.addToCartText}>Add to Cart</Text>
-//             </TouchableOpacity>
-
-//             <TouchableOpacity
-//               style={styles.buyNowButton}
-//               activeOpacity={0.8}
-//             >
-//               <Text style={styles.buyNowText}>Buy Now</Text>
-//             </TouchableOpacity>
-//           </View>
-//         </View>
-//       </ScrollView>
-//     </SafeAreaView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   safeArea: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//   },
-//   scrollContainer: {
-//     flexGrow: 1,
-//     paddingBottom: 20,
-//   },
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     marginTop: 10
-//   },
-//   header: {
-//     paddingHorizontal: 20,
-//     paddingTop: 15,
-//     paddingBottom: 10,
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//   },
-//   backButton: {
-//     padding: 8,
-//   },
-//   backButtonText: {
-//     fontSize: 24,
-//     color: '#333',
-//   },
-//   imageContainer: {
-//     paddingHorizontal: 20,
-//     paddingVertical: 15,
-//     alignItems: 'center',
-//     backgroundColor: '#f9f9f9',
-//     marginHorizontal: 20,
-//     borderRadius: 12,
-//     marginBottom: 20,
-//     ...Platform.select({
-//       ios: {
-//         shadowColor: '#000',
-//         shadowOffset: { width: 0, height: 2 },
-//         shadowOpacity: 0.1,
-//         shadowRadius: 6,
-//       },
-//       android: {
-//         elevation: 4,
-//       },
-//     }),
-//   },
-//   image: {
-//     width: '100%',
-//     height: 300,
-//   },
-//   imageSmall: {
-//     height: 250,
-//   },
-//   infoContainer: {
-//     paddingHorizontal: 25,
-//     marginBottom: 25,
-//   },
-//   title: {
-//     fontSize: 24,
-//     fontWeight: '700',
-//     color: '#333',
-//     marginBottom: 12,
-//     lineHeight: 30,
-//   },
-//   titleSmall: {
-//     fontSize: 20,
-//     lineHeight: 26,
-//   },
-//   priceRatingContainer: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     alignItems: 'center',
-//     marginBottom: 20,
-//   },
-//   price: {
-//     fontSize: 22,
-//     fontWeight: '700',
-//     color: '#FF6347',
-//   },
-//   ratingContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     backgroundColor: '#f5f5f5',
-//     paddingVertical: 4,
-//     paddingHorizontal: 8,
-//     borderRadius: 10,
-//   },
-//   starIcon: {
-//     color: '#FFD700',
-//     fontSize: 16,
-//     marginRight: 2,
-//   },
-//   ratingText: {
-//     fontSize: 14,
-//     color: '#666',
-//     marginLeft: 4,
-//   },
-//   description: {
-//     fontSize: 16,
-//     color: '#555',
-//     lineHeight: 24,
-//   },
-//   descriptionSmall: {
-//     fontSize: 14,
-//     lineHeight: 22,
-//   },
-//   buttonContainer: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     paddingHorizontal: 25,
-//     marginTop: 10,
-//   },
-//   addToCartButton: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     borderWidth: 1,
-//     borderColor: '#6200ee',
-//     borderRadius: 8,
-//     paddingVertical: 15,
-//     marginRight: 10,
-//     alignItems: 'center',
-//   },
-//   addToCartText: {
-//     color: '#6200ee',
-//     fontSize: 16,
-//     fontWeight: '600',
-//   },
-//   buyNowButton: {
-//     flex: 1,
-//     backgroundColor: '#6200ee',
-//     borderRadius: 8,
-//     paddingVertical: 15,
-//     alignItems: 'center',
-//   },
-//   buyNowText: {
-//     color: '#fff',
-//     fontSize: 16,
-//     fontWeight: '600',
-//   },
-// });
-
-// export default ProductDetailsScreen;
-
 import React from "react";
 import {
   View,
@@ -286,12 +11,13 @@ import {
   SafeAreaView,
   Animated,
   Share,
+  Alert
 } from "react-native";
 import Images from "../../assets/Images";
 import { useNavigation } from "@react-navigation/native";
 import { addToWishlist } from "../../redux/wishlistSlice";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/cartSlice";
+import { addToCart, setBuyNowItem } from "../../redux/cartSlice";
 
 const ProductDetailsScreen = ({ route }) => {
   const { product } = route.params;
@@ -304,16 +30,44 @@ const ProductDetailsScreen = ({ route }) => {
   const handleNavigateWishlist = () => {
     dispatch(addToWishlist(product));
     alert(`${product.title} added to wishlist!`);
-    navigation.navigate('Wishlist')
+    // navigation.navigate('Wishlist')
   }
 
   const handleNavigateAddToCart = () => {
-    dispatch(addToCart(product));
-    alert(`${product.title} added to Cart!`);
-    navigation.navigate('Cart')
-  }
+    dispatch(addToCart({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image: product.image,
+      quantity: 1
+    }));
+    Alert.alert(
+      "Added to Cart",
+      `${product.title} has been added to your cart`,
+      [
+        {
+          text: "Continue Shopping",
+          style: "cancel"
+        },
+        {
+          text: "View Cart",
+          onPress: () => navigation.navigate('Cart')
+        }
+      ]
+    );
+  };
 
-  // Header animation
+  const handleNavigateToBuyNow = () => {
+    dispatch(setBuyNowItem({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      image: product.image,
+      quantity: 1
+    }));
+    navigation.navigate('Checkout');
+  };
+  
   const headerOpacity = scrollY.interpolate({
     inputRange: [0, 100],
     outputRange: [0, 1],
@@ -439,9 +193,9 @@ const ProductDetailsScreen = ({ route }) => {
           </TouchableOpacity>
         </View>
 
-        {/* <TouchableOpacity style={styles.buyNowButton} activeOpacity={0.8}>
+        <TouchableOpacity style={styles.buyNowButton} activeOpacity={0.8} onPress={handleNavigateToBuyNow}>
           <Text style={styles.buyNowButtonText}>Buy Now</Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -502,7 +256,7 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontSize: 16,
-    color: "#6200ee",
+    color: "#0000FF",
     fontWeight: "500",
   },
   imageContainer: {
@@ -636,7 +390,7 @@ const styles = StyleSheet.create({
   },
   addToCartButton: {
     flex: 1,
-    backgroundColor: "#6200ee",
+    backgroundColor: "#0000FF",
     borderRadius: 8,
     paddingVertical: 15,
     alignItems: "center",
@@ -658,7 +412,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   buyNowButton: {
-    backgroundColor: "#FF6347",
+    backgroundColor: "#FFC300",
     borderRadius: 8,
     paddingVertical: 17,
     marginHorizontal: 25,
@@ -676,7 +430,7 @@ const styles = StyleSheet.create({
     }),
   },
   buyNowButtonText: {
-    color: "#fff",
+    color: "black",
     fontSize: 16,
     fontWeight: "600",
   },

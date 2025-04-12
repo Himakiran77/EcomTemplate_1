@@ -85,6 +85,10 @@ const HomeScreen = ({ navigation }) => {
     return category;
   };
 
+  const handleNavigateToProfile = () => {
+    navigation.navigate('Profile');
+  }
+
   return (
     <View style={styles.container}>
       {/* Search Bar */}
@@ -94,10 +98,12 @@ const HomeScreen = ({ navigation }) => {
             style={styles.KalaiLogo}
           /> */}
         <View style={styles.searchInputWrapper}>
+          <TouchableOpacity onPress={handleNavigateToProfile}>
         <Image 
             source={Images.KalaiLogo} 
             style={styles.KalaiLogo}
           />
+          </TouchableOpacity>
           <Image 
             source={Images.Search} 
             style={styles.searchIcon}
