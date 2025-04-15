@@ -15,7 +15,13 @@ const Images = {
     Notification: require('../assets/Notification.png'),
     Terms: require('../assets/Terms.png'),
     Lock: require('../assets/Lock.png'),
-    
+    Carousel1: require('../assets/Carousel1.jpg'),
+    Carousel2: require('../assets/Carousel2.jpg'),
+    Carousel3: require('../assets/Carousel3.jpg'),
+    adidas: require('../assets/adidas.png'),
+    Nike: require('../assets/Nike.jpg'),
+    puma: require('../assets/puma.jpg'),
+    Reebok: require('../assets/Reebok.jpg'),
 }
 
 export default Images;
